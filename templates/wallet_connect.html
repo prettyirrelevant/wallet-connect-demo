@@ -24,10 +24,11 @@
 
 <body>
     <h1 class="text-center font-extrabold tracking-widest text-5xl mt-4 text-gray-300">DeCHO</h1>
-    <div class="flex mt-80 justify-center place-items-center">
+    <div id="content" class="flex mt-80 justify-center place-items-center flex-col">
         <button
-            class="font-bold tracking-widest text-gray-300 uppercase border-2 rounded px-5 py-3 hover:text-gray-800 hover:bg-gray-100"
+            class="font-bold tracking-widest text-gray-300 uppercase border-2 my-3 rounded px-8 py-3 hover:text-gray-800 hover:bg-gray-100"
             id="btn">Connect wallet</button>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/client@1.7.1/dist/umd/index.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/algorand-walletconnect-qrcode-modal@1.6.1/dist/umd/index.min.js"></script>
@@ -35,19 +36,45 @@
     <script src="https://cdn.jsdelivr.net/npm/algosdk@1.14.0/dist/browser/algosdk.min.js"></script>
     <script src="https://bundle.run/buffer@6.0.3"></script>
     <script>
+        const algosdk = window.algosdk
+        const formatJsonRpcRequest = window.JsonRpcUtils.formatJsonRpcRequest
         const WalletConnect = window.WalletConnect.default
         const QRCodeModal = window.WalletConnectQRCodeModal.default
-        const algosdk = window.algosdk
-        const algodClient = new algosdk.Algodv2("", "https://node.algoexplorerapi.io", "")
-        const formatJsonRpcRequest = window.JsonRpcUtils.formatJsonRpcRequest
 
-        let myAddress = window.localStorage.getItem('myAddress')
-        console.log(window)
         const recipientAddress = "{{ address }}"
         const amountToSend = "{{ amount }}"
         const requestType = "{{ request_type }}"
+        let myAddress = window.localStorage.getItem('myAddress')
 
-        const btn = document.getElementById("btn")
+
+        const connectWalletBtn = document.getElementById("btn")
+        const contentDiv = document.getElementById("content")
+
+        const algodClient = new algosdk.Algodv2("", "https://node.algoexplorerapi.io", "")
+        const connector = new WalletConnect({
+            bridge: "https://bridge.walletconnect.org",
+            qrcodeModal: QRCodeModal,
+        })
+
+
+        const addDisconnectButton = (address, contentDiv, connectWalletBtn) => {
+            if (address) {
+                connectWalletBtn.textContent = "SIGN TRANSACTION"
+
+                contentDiv.insertAdjacentHTML("beforeend",
+                    `<button id="disconnectBtn" class="block font-bold tracking-widest text-gray-300 uppercase border-2 rounded px-16 py-3 hover:text-gray-800 hover:bg-gray-100"id="btn">
+                    disconnect
+                </button>`)
+            }
+        }
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id == 'disconnectBtn') {
+                connector.killSession()
+                window.localStorage.removeItem('myAddress')
+                window.location.reload()
+            }
+        })
+
 
         const makeTransaction = (myAddress, amountToSend, recipientAddress, connector) => {
             algodClient.getTransactionParams().do().then((suggestedParams) => {
@@ -66,9 +93,6 @@
                     return {
                         txn: encodedTxn,
                         message: 'DeCHO',
-                        // Note: if the transaction does not need to be signed (because it's part of an atomic group
-                        // that will be signed by another party), specify an empty singers array like so:
-                        // signers: [],
                     };
                 });
 
@@ -83,21 +107,20 @@
             }).catch((error) => console.log(error))
         }
 
-        btn.onclick = () => {
-            const connector = new WalletConnect({
-                bridge: "https://bridge.walletconnect.org",
-                qrcodeModal: QRCodeModal,
-            })
+        addDisconnectButton(myAddress, contentDiv, connectWalletBtn)
 
-            // Check if connection is already established
+        connectWalletBtn.onclick = () => {
             if (!connector.connected && !myAddress) {
-                // create new session
+                console.log('Creating new connection...')
                 connector.createSession();
             } else {
-                console.log('Already connected')
-                makeTransaction(myAddress, amountToSend, recipientAddress, connector)
+                console.log('Already connected...')
+                // makeTransaction(myAddress, amountToSend, recipientAddress, connector)
+                if (requestType === "makeTxn") {
+                    makeTransaction(myAddress, amountToSend, recipientAddress, connector)
+                }
             }
-            // Subscribe to connection events
+
             connector.on("connect", (error, payload) => {
                 if (error) {
                     throw error;
@@ -107,10 +130,7 @@
                 myAddress = accounts[0]
 
                 window.localStorage.setItem('myAddress', myAddress)
-
-                if (requestType === "makeTxn") {
-                    makeTransaction(myAddress, amountToSend, recipientAddress, connector)
-                }
+                window.location.reload()
             });
 
 
@@ -119,7 +139,6 @@
                     throw error;
                 }
 
-                // Get updated accounts
                 const { accounts } = payload.params[0];
             });
 
@@ -128,7 +147,7 @@
                     throw error;
                 }
 
-                console.log('disconnected')
+                console.log('Disconnected...')
             });
         }
     </script>

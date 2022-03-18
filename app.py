@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 
 application = Flask(__name__)
 
@@ -14,3 +14,8 @@ def wallet_connect():
     return render_template(
         "wallet_connect.html", address=address, amount=amount, request_type=request_type
     )
+
+
+@application.get("/")
+def index():
+    return jsonify({"status": 1, "message": "Welcome to DeCHO"})

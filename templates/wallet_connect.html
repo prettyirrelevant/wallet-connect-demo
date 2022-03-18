@@ -37,7 +37,7 @@
         const WalletConnect = window.WalletConnect.default
         const QRCodeModal = window.WalletConnectQRCodeModal.default
         const algosdk = window.algosdk
-        const algodClient = algosdk.Algodv2('', 'https://node.algoexplorerapi.io', '')
+        const algodClient = new algosdk.Algodv2('', 'https://node.algoexplorerapi.io', '')
         const formatJsonRpcRequest = window.JsonRpcUtils.formatJsonRpcRequest
 
         let myAddress;

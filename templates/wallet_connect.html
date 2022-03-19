@@ -79,10 +79,11 @@
         const makeTransaction = (myAddress, amountToSend, recipientAddress, connector) => {
             algodClient.getTransactionParams().do().then((suggestedParams) => {
                 console.log(suggestedParams)
-                const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+                const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
                     from: myAddress,
                     to: recipientAddress,
                     amount: parseInt(amountToSend),
+                    assetIndex: 297995609,
                     suggestedParams,
                 });
 

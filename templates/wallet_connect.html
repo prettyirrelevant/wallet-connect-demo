@@ -44,7 +44,8 @@
 
         const recipientAddress = "{{ address }}"
         const amountToSend = "{{ amount }}"
-        const requestType = "{{ request_type }}"
+        const txnType = "{{ txn_type }}"
+        const txnMethod = "{{ txn_method }}"
         let myAddress = window.localStorage.getItem('myAddress')
 
 
@@ -79,14 +80,23 @@
 
         const makeTransaction = (myAddress, amountToSend, recipientAddress, connector) => {
             algodClient.getTransactionParams().do().then((suggestedParams) => {
-                console.log(suggestedParams)
-                const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-                    from: myAddress,
-                    to: recipientAddress,
-                    amount: parseInt(amountToSend),
-                    assetIndex: 297995609,
-                    suggestedParams,
-                });
+                if (txnMethod === "asa") {
+                    const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+                        from: myAddress,
+                        to: recipientAddress,
+                        amount: parseInt(amountToSend) * 100,
+                        assetIndex: 297995609,
+                        suggestedParams,
+                    });
+                } else if (txnMethod === "algo") {
+                    const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+                        from: myAddress,
+                        to: recipientAddress,
+                        amount: parseInt(amountToSend) * 1000000,
+                        suggestedParams,
+                    });
+                }
+
 
                 // Sign transaction
                 const txns = [txn]
@@ -124,7 +134,7 @@
             } else {
                 console.log('Already connected...')
                 // makeTransaction(myAddress, amountToSend, recipientAddress, connector)
-                if (requestType === "makeTxn") {
+                if (txnType === "makeTxn") {
                     makeTransaction(myAddress, amountToSend, recipientAddress, connector)
                 }
             }

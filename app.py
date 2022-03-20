@@ -9,14 +9,14 @@ def wallet_connect():
 
     address = request.args.get("recipientAddress")
     amount = request.args.get("amountToSend")
-    txn_type = request.args.get("txnType")
+    request_type = request.args.get("requestType")
     txn_method = request.args.get("txnMethod")
 
     return render_template(
         "wallet_connect.html",
         address=address,
         amount=amount,
-        txn_type=txn_type,
+        request_type=request_type,
         txn_method=txn_method,
     )
 

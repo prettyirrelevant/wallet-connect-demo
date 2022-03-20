@@ -44,7 +44,7 @@
 
         const recipientAddress = "{{ address }}"
         const amountToSend = "{{ amount }}"
-        const txnType = "{{ txn_type }}"
+        const requestType = "{{ request_type }}"
         const txnMethod = "{{ txn_method }}"
         let myAddress = window.localStorage.getItem('myAddress')
 
@@ -136,7 +136,7 @@
             } else {
                 console.log('Already connected...')
                 // makeTransaction(myAddress, amountToSend, recipientAddress, connector)
-                if (txnType === "makeTxn") {
+                if (requestType === "makeTxn") {
                     makeTransaction(myAddress, amountToSend, recipientAddress, connector)
                 }
             }

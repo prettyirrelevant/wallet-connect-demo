@@ -79,9 +79,11 @@
 
 
         const makeTransaction = (myAddress, amountToSend, recipientAddress, connector) => {
+            let txn;
+
             algodClient.getTransactionParams().do().then((suggestedParams) => {
                 if (txnMethod === "asa") {
-                    const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+                    txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
                         from: myAddress,
                         to: recipientAddress,
                         amount: parseInt(amountToSend) * 100,
@@ -89,7 +91,7 @@
                         suggestedParams,
                     });
                 } else if (txnMethod === "algo") {
-                    const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+                    txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
                         from: myAddress,
                         to: recipientAddress,
                         amount: parseInt(amountToSend) * 1000000,

@@ -79,7 +79,7 @@
         const makeTransaction = (myAddress, amountToSend, recipientAddress, connector) => {
             algodClient.getTransactionParams().do().then((suggestedParams) => {
                 console.log(suggestedParams)
-                const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+                const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
                     from: myAddress,
                     to: recipientAddress,
                     amount: parseInt(amountToSend),

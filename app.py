@@ -11,6 +11,7 @@ def wallet_connect():
     amount = request.args.get("amountToSend")
     request_type = request.args.get("requestType")
     txn_method = request.args.get("txnMethod")
+    device_type = request.args.get("deviceType")
 
     return render_template(
         "wallet_connect.html",
@@ -18,6 +19,7 @@ def wallet_connect():
         amount=amount,
         request_type=request_type,
         txn_method=txn_method,
+        device_type=device_type,
     )
 
 

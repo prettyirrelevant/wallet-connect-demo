@@ -46,6 +46,7 @@
         const amountToSend = "{{ amount }}"
         const requestType = "{{ request_type }}"
         const txnMethod = "{{ txn_method }}"
+        const deviceType = "{{ device_type }}"
         let myAddress = window.localStorage.getItem('myAddress')
 
 
@@ -113,6 +114,8 @@
                 const requestParams = [txnsToSign];
                 const request = formatJsonRpcRequest("algo_signTxn", requestParams);
 
+                deviceType === "mobile" ? window.location.assign('algorand-wc://') : null
+
                 connector.sendCustomRequest(request).then((result) => {
                     const decodedR = result.map(element => {
                         return element ? new Uint8Array(Buffer.from(element, "base64")) : null;
@@ -135,7 +138,6 @@
                 connector.createSession();
             } else {
                 console.log('Already connected...')
-                // makeTransaction(myAddress, amountToSend, recipientAddress, connector)
                 if (requestType === "makeTxn") {
                     makeTransaction(myAddress, amountToSend, recipientAddress, connector)
                 }

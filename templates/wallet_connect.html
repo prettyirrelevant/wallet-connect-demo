@@ -114,7 +114,7 @@
                 const requestParams = [txnsToSign];
                 const request = formatJsonRpcRequest("algo_signTxn", requestParams);
 
-                deviceType === "mobile" ? window.location.assign('algorand-wc://') : null
+                deviceType === "mobile" ? window.open('algorand-wc://', '_blank') : null
 
                 connector.sendCustomRequest(request).then((result) => {
                     const decodedR = result.map(element => {
